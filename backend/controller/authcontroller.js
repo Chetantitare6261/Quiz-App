@@ -32,23 +32,24 @@ const transporter = require('../config/nodemailer')
             {expiresIn: "7d"}
         )
 
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? 'none' : 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+    
 
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+    newUser.verifyOtp = otp;
+    newUser.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
+
+        await newUser.save();
+        
         const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: "Welcome to Quiz platform",
-            text:`Welcome to quiz app. Your Account been created with email id: ${email}`
-        }
+          from: process.env.SENDER_EMAIL,
+          to: newUser.email,
+          subject: "Account Verification OTP",
+          text: `Your OTP is ${otp}. Verify your account using the OTP.`,
+        };
 
         await transporter.sendMail(mailOptions);
-
-        res.json({success:true, message:"User Registration successfully"})
+        res.json({ success: true, message: "Registration Successfull!. Verification OTP Sent on Email.",user:newUser, token });
 
         
     } catch (error) {
@@ -77,14 +78,9 @@ const transporter = require('../config/nodemailer')
           expiresIn: "7d",
         });
 
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+      
         
-        return res.json({ success: true, message: "Login Successfully!" });
+        return res.json({ success: true, message: "Login Successfully!",token, user });
 
         
     } catch (error) {
