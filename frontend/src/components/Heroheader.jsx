@@ -12,6 +12,7 @@ const Heroheader = () => {
     { name: 'DSA', id: 'science' },
     { name: 'OOPs', id: 'history' },
     { name: 'Databse', id: 'movies' },
+    { name: 'Mysql', id: 'movies' },
     { name: 'Computer Architecture', id: 'sports' },
   ];
 
